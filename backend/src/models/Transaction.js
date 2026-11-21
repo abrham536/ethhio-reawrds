@@ -20,6 +20,7 @@ const transactionSchema = new mongoose.Schema(
         'REDEEM_TELEBIRR',
         'REFERRAL_BONUS',
         'WELCOME_BONUS',
+        'DAILY_CHECKIN',
         'MANUAL_ADJUSTMENT',
       ],
     },

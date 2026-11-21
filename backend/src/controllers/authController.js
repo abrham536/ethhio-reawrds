@@ -233,3 +233,57 @@ export const getMe = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Daily Check-in for free reward points
+// @route   POST /api/auth/daily-checkin
+// @access  Private
+export const dailyCheckIn = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const lastCheckInStr = user.lastCheckInDate
+      ? new Date(user.lastCheckInDate).toISOString().slice(0, 10)
+      : null;
+
+    if (lastCheckInStr === todayStr) {
+      return res.status(400).json({
+        success: false,
+        message: 'ቀደም ሲል ለዛሬ የዕለት ጉርሻዎን ወስደዋል! ነገ ተመልሰው ይሞክሩ። (You already checked in today! Come back tomorrow.)',
+        alreadyCheckedIn: true,
+      });
+    }
+
+    // Award 10 points (1 ETB) on daily check-in
+    const checkInReward = 10;
+    user.pointsBalance += checkInReward;
+    user.lifetimeEarnedPoints += checkInReward;
+    user.lastCheckInDate = new Date();
+    user.updateTier();
+    await user.save();
+
+    await Transaction.create({
+      txnNumber: `TXN-CHK-${Date.now()}-${Math.floor(Math.random() * 900 + 100)}`,
+      type: 'DAILY_CHECKIN',
+      user: user._id,
+      pointsTransacted: checkInReward,
+      cashbackEquivalentETB: checkInReward * 0.1,
+      description: 'ዕለታዊ የቼክ-ኢን ጉርሻ (Daily check-in reward)',
+      status: 'COMPLETED',
+    });
+
+    res.json({
+      success: true,
+      message: `እንኳን ደስ አለዎት! 10 ነፃ ነጥቦች (1.00 ብር) አግኝተዋል! (Congratulations! You earned ${checkInReward} reward points!)`,
+      pointsAwarded: checkInReward,
+      pointsBalance: user.pointsBalance,
+      etbEquivalent: Number((user.pointsBalance * 0.1).toFixed(2)),
+      walletBalanceETB: user.walletBalanceETB || 0,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

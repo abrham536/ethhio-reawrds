@@ -80,6 +80,10 @@ const userSchema = new mongoose.Schema(
       enum: ['active', 'suspended'],
       default: 'active',
     },
+    lastCheckInDate: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

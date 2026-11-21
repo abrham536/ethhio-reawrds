@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { CustomerHome } from './pages/customer/CustomerHome';
 import { WalletPage } from './pages/customer/WalletPage';
+import { FinancePage } from './pages/customer/FinancePage';
 import { RedeemPage } from './pages/customer/RedeemPage';
 import { ReferralsPage } from './pages/customer/ReferralsPage';
 import { POSPage } from './pages/merchant/POSPage';
@@ -70,6 +71,14 @@ function App() {
           <div className="flex-1">
             <Routes>
               <Route path="/" element={<CustomerHome />} />
+              <Route
+                path="/finance"
+                element={
+                  <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                    <FinancePage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/wallet"
                 element={

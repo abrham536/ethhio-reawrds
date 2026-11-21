@@ -13,6 +13,8 @@ const transactionSchema = new mongoose.Schema(
       required: true,
       enum: [
         'EARN',
+        'DEPOSIT',
+        'WITHDRAWAL',
         'REDEEM_VOUCHER',
         'REDEEM_AIRTIME',
         'REDEEM_TELEBIRR',

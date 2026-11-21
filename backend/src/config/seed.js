@@ -7,6 +7,8 @@ import { Voucher } from '../models/Voucher.js';
 import { UserVoucher } from '../models/UserVoucher.js';
 import { Transaction } from '../models/Transaction.js';
 import { PayoutRequest } from '../models/PayoutRequest.js';
+import { DepositRequest } from '../models/DepositRequest.js';
+import { WithdrawalRequest } from '../models/WithdrawalRequest.js';
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ export const seedDatabase = async () => {
       UserVoucher.deleteMany({}),
       Transaction.deleteMany({}),
       PayoutRequest.deleteMany({}),
+      DepositRequest.deleteMany({}),
+      WithdrawalRequest.deleteMany({}),
     ]);
 
     console.log('[Seed] Inserting Ethiopian Partner Merchants...');
@@ -185,7 +189,8 @@ export const seedDatabase = async () => {
       memberCode: "ETR-984210",
       referralCode: "ABRHAM99",
       city: "Addis Ababa",
-      pointsBalance: 4250, // 425 ETB
+      walletBalanceETB: 2500, // 2,500 ETB Available Cash Balance
+      pointsBalance: 4250, // 425 ETB in Points
       lifetimeEarnedPoints: 4650,
       tier: "Gold", // 1.25x tier bonus
     });
@@ -200,6 +205,7 @@ export const seedDatabase = async () => {
       referralCode: "SELAM88",
       referredBy: customer1._id,
       city: "Addis Ababa",
+      walletBalanceETB: 800,
       pointsBalance: 1450, // 145 ETB
       lifetimeEarnedPoints: 1450,
       tier: "Silver", // 1.1x tier bonus
@@ -333,7 +339,7 @@ export const seedDatabase = async () => {
       },
     ]);
 
-    console.log('[Seed] Creating Sample Payout Requests...');
+    console.log('[Seed] Creating Sample Payout & Deposit Requests...');
     await PayoutRequest.create({
       requestNumber: "PAY-2026-0001",
       user: customer2._id,
@@ -343,6 +349,45 @@ export const seedDatabase = async () => {
       amountETB: 50,
       status: "PENDING",
       adminNote: "",
+    });
+
+    // Sample Pending Deposit with payment screenshot proof
+    await DepositRequest.create({
+      requestNumber: "DEP-2026-0101",
+      user: customer1._id,
+      amountETB: 1000,
+      paymentMethod: "TELEBIRR",
+      transactionRef: "CI7849201938",
+      senderPhoneOrAccount: "+251911333333",
+      userNote: "Transferred 1,000 ETB for retail purchase points",
+      screenshotUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600",
+      status: "PENDING",
+    });
+
+    // Sample Approved Deposit
+    await DepositRequest.create({
+      requestNumber: "DEP-2026-0100",
+      user: customer1._id,
+      amountETB: 1500,
+      paymentMethod: "CBE",
+      transactionRef: "FT2611849201",
+      senderPhoneOrAccount: "1000982134567",
+      userNote: "CBE Mobile Banking transfer",
+      screenshotUrl: "https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=600",
+      status: "APPROVED",
+      reviewedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      adminNote: "Verified in CBE statement.",
+    });
+
+    // Sample Pending Withdrawal
+    await WithdrawalRequest.create({
+      requestNumber: "WTH-2026-0051",
+      user: customer1._id,
+      amountETB: 500,
+      method: "TELEBIRR",
+      accountNumber: "+251911333333",
+      accountHolderName: "Abreham Tadesse",
+      status: "PENDING",
     });
 
     console.log('\n======================================================');

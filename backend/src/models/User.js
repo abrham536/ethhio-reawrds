@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    walletBalanceETB: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     pointsBalance: {
       type: Number,
       default: 0,

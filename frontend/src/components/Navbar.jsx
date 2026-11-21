@@ -13,6 +13,7 @@ import {
   Share2,
   Receipt,
   Check,
+  ArrowDownLeft,
 } from 'lucide-react';
 import { useAuth, DEMO_ACCOUNTS } from '../context/AuthContext';
 import { DigitalCardModal } from './DigitalCardModal';
@@ -112,6 +113,18 @@ export const Navbar = () => {
 
               {user?.role === 'customer' && (
                 <>
+                  <Link
+                    to="/finance"
+                    className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      isActive('/finance')
+                        ? 'bg-emerald-50 text-emerald-700 font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <ArrowDownLeft className="w-4 h-4 inline-block mr-1.5 mb-0.5 text-emerald-600" />
+                    {t('navFinance')}
+                  </Link>
+
                   <Link
                     to="/wallet"
                     className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all ${

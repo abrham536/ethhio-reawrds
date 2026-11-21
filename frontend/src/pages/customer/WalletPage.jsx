@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Wallet,
   ArrowDownLeft,
@@ -83,11 +84,30 @@ export const WalletPage = () => {
                 </h2>
                 <p className="text-xs text-emerald-200 mt-1">
                   ≈ <strong>{etbValue} {t('currency')}</strong> {t('cashValue')}
+                  <span className="mx-2">•</span>
+                  {t('walletCash')}: <strong>{(user?.walletBalanceETB || 0).toLocaleString()} {t('currency')}</strong>
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-slate-950">
                 {tier} {t('tierLevel')}
               </span>
+            </div>
+
+            <div className="mt-4 flex items-center space-x-2">
+              <Link
+                to="/finance"
+                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs flex items-center space-x-1 backdrop-blur-xs transition-colors"
+              >
+                <ArrowDownLeft className="w-3.5 h-3.5" />
+                <span>{t('tabDeposit')}</span>
+              </Link>
+              <Link
+                to="/finance"
+                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs flex items-center space-x-1 backdrop-blur-xs transition-colors"
+              >
+                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span>{t('tabWithdraw')}</span>
+              </Link>
             </div>
 
             <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs">

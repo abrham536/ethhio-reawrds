@@ -12,6 +12,7 @@ import posRoutes from './routes/posRoutes.js';
 import voucherRoutes from './routes/voucherRoutes.js';
 import payoutRoutes from './routes/payoutRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import financeRoutes from './routes/financeRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -19,7 +20,8 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(
   cors({
     origin: '*',
@@ -48,6 +50,7 @@ app.use('/api/pos', posRoutes);
 app.use('/api/vouchers', voucherRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/finance', financeRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);

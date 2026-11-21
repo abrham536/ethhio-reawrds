@@ -133,9 +133,10 @@ export const register = async (req, res, next) => {
 // @access  Public
 export const login = async (req, res, next) => {
   try {
-    const { loginId, password } = req.body; // loginId can be phone or email
+    const { loginId, phone, email, password } = req.body;
+    const identifier = loginId || phone || email;
 
-    if (!loginId || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({
         success: false,
         message: 'Please provide phone/email and password.',
@@ -144,7 +145,7 @@ export const login = async (req, res, next) => {
 
     // Search by phone or email
     const user = await User.findOne({
-      $or: [{ phone: loginId }, { email: loginId.toLowerCase() }],
+      $or: [{ phone: identifier }, { email: String(identifier).toLowerCase() }],
     })
       .select('+password')
       .populate('merchant');
@@ -184,6 +185,7 @@ export const login = async (req, res, next) => {
         role: user.role,
         merchant: user.merchant,
         memberCode: user.memberCode,
+        walletBalanceETB: user.walletBalanceETB || 0,
         pointsBalance: user.pointsBalance,
         lifetimeEarnedPoints: user.lifetimeEarnedPoints,
         tier: user.tier,
@@ -216,9 +218,11 @@ export const getMe = async (req, res, next) => {
         role: user.role,
         merchant: user.merchant,
         memberCode: user.memberCode,
+        walletBalanceETB: user.walletBalanceETB || 0,
         pointsBalance: user.pointsBalance,
         lifetimeEarnedPoints: user.lifetimeEarnedPoints,
         etbEquivalent,
+        totalAvailableCashETB: Number(((user.walletBalanceETB || 0) + etbEquivalent).toFixed(2)),
         tier: user.tier,
         referralCode: user.referralCode,
         city: user.city,

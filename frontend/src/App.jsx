@@ -3,8 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { CustomerHome } from './pages/customer/CustomerHome';
-import { WalletPage } from './pages/customer/WalletPage';
+import { InvestPage } from './pages/customer/InvestPage';
+import { AccountPage } from './pages/customer/AccountPage';
+import { WithdrawPage } from './pages/customer/WithdrawPage';
+import { OrdersPage } from './pages/customer/OrdersPage';
+import { NoticePage } from './pages/customer/NoticePage';
+import { BlogPage } from './pages/customer/BlogPage';
 import { FinancePage } from './pages/customer/FinancePage';
+import { WalletPage } from './pages/customer/WalletPage';
 import { RedeemPage } from './pages/customer/RedeemPage';
 import { ReferralsPage } from './pages/customer/ReferralsPage';
 import { POSPage } from './pages/merchant/POSPage';
@@ -18,8 +24,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#080d1a]">
+        <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -35,27 +41,26 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
-// Footer Component with Localization
+// Sleek minimal footer
 const Footer = () => {
   const { t } = useAuth();
 
   return (
-    <footer className="bg-slate-900 text-slate-400 text-xs py-8 px-4 border-t border-slate-800">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <footer className="bg-[#050811] text-slate-500 text-[11px] py-6 px-4 border-t border-slate-900/80 mb-14 lg:mb-0">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div className="flex items-center space-x-2">
-          <span className="text-lg">🎁</span>
-          <span className="font-extrabold text-white text-sm">{t('appName')}</span>
-          <span>• {t('addisAbaba')}</span>
+          <div className="w-5 h-5 rounded-md bg-emerald-500 flex items-center justify-center text-[10px] font-black text-slate-950">
+            P&G
+          </div>
+          <span className="font-black text-slate-300">EthioRewards P&G</span>
+          <span>• Addis Ababa, Ethiopia</span>
         </div>
-        <p className="text-slate-500 text-[11px]">
-          {t('footerTagline')}
-        </p>
-        <div className="flex items-center space-x-4 text-slate-400">
-          <span>ቴሌብር (Telebirr)</span>
+        <div className="flex items-center space-x-3 text-slate-500 text-[10px]">
+          <span>CBE Birr</span>
           <span>•</span>
-          <span>ኢትዮ ቴሌኮም (Ethio Telecom)</span>
+          <span>Telebirr</span>
           <span>•</span>
-          <span>ሲቢኢ ብር (CBE Birr)</span>
+          <span>BOA Mobile</span>
         </div>
       </div>
     </footer>
@@ -66,11 +71,39 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-emerald-500 selection:text-white">
+        <div className="min-h-screen flex flex-col bg-[#080d1a] text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
           <Navbar />
           <div className="flex-1">
             <Routes>
+              {/* Core P&G Theme Screens */}
               <Route path="/" element={<CustomerHome />} />
+              <Route path="/invest" element={<InvestPage />} />
+              <Route path="/notice" element={<NoticePage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route
+                path="/account"
+                element={
+                  <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                    <AccountPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/withdraw"
+                element={
+                  <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                    <WithdrawPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                    <OrdersPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/finance"
                 element={

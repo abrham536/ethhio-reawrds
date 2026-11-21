@@ -13,6 +13,7 @@ import voucherRoutes from './routes/voucherRoutes.js';
 import payoutRoutes from './routes/payoutRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import financeRoutes from './routes/financeRoutes.js';
+import investmentRoutes from './routes/investmentRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -51,6 +52,7 @@ app.use('/api/vouchers', voucherRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/finance', financeRoutes);
+app.use('/api/invest', investmentRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);

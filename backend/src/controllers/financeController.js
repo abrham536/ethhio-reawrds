@@ -244,6 +244,63 @@ export const getMyWithdrawals = async (req, res, next) => {
   }
 };
 
+// @desc    Customer binds their bank card / withdrawal account with 6-digit trade password
+// @route   POST /api/finance/bind-card
+// @access  Private (Customer)
+export const bindBankCard = async (req, res, next) => {
+  try {
+    const { bank, accountHolderName, accountNumber, tradePassword } = req.body;
+
+    if (!bank || !accountHolderName || !accountNumber) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide Bank, Account Holder Name, and Account Number.',
+      });
+    }
+
+    if (!tradePassword || tradePassword.length < 4) {
+      return res.status(400).json({
+        success: false,
+        message: 'Trade security password must be at least 4 digits.',
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+    user.bankCard = {
+      bank: bank.trim(),
+      accountHolderName: accountHolderName.trim(),
+      accountNumber: accountNumber.trim(),
+      isBound: true,
+      boundAt: new Date(),
+    };
+    user.tradePassword = tradePassword.trim();
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Bank card successfully linked to your account!',
+      bankCard: user.bankCard,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get user bound bank card
+// @route   GET /api/finance/bank-card
+// @access  Private (Customer)
+export const getBankCard = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.json({
+      success: true,
+      bankCard: user.bankCard || { isBound: false },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ================= ADMIN CONTROLLERS =================
 
 // @desc    Admin lists deposit requests (with status filter)

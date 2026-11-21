@@ -1,43 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Wallet,
+  Headphones,
+  ChevronRight,
+  Copy,
+  Gift,
+  Users,
+  Gem,
   ArrowDownLeft,
   ArrowUpRight,
-  Gift,
-  QrCode,
-  Share2,
-  Calendar,
   Sparkles,
-  Download,
-  ShieldCheck,
-  CheckCircle,
-  Copy,
-  ChevronRight,
+  CheckCircle2,
+  Calendar,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../../context/AuthContext';
-import { DigitalCardModal } from '../../components/DigitalCardModal';
 import api from '../../api/client';
 
 export const CustomerHome = () => {
   const { user, isAmharic, t, refreshUser } = useAuth();
   const navigate = useNavigate();
 
-  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const [copiedInvite, setCopiedInvite] = useState(false);
   const [checkInLoading, setCheckInLoading] = useState(false);
   const [checkInStatus, setCheckInStatus] = useState(null);
-  const [copiedInvite, setCopiedInvite] = useState(false);
 
-  const points = user?.pointsBalance || 0;
-  const etbValue = Number((points * 0.1).toFixed(2));
-  const walletCash = user?.walletBalanceETB || 0;
-  const totalBalance = walletCash + etbValue;
+  // Live dividend feed ticker
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const dividendFeed = [
+    { phone: '0912***45', amount: 'Br 417.40', product: 'Pampers VIP 1' },
+    { phone: '0924***89', amount: 'Br 2,640.00', product: 'Ariel VIP 2' },
+    { phone: '0933***12', amount: 'Br 14,700.00', product: 'Always VIP 3' },
+    { phone: '0945***78', amount: 'Br 417.40', product: 'Pampers VIP 1' },
+    { phone: '0911***90', amount: 'Br 60,000.00', product: 'HEGII VIP 5' },
+  ];
 
-  // Clean phone display e.g. 963699674
-  const displayPhone = user?.phone
-    ? user.phone.replace('+251', '').replace(/^0/, '')
-    : '963699674';
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % dividendFeed.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleCopyInvite = () => {
+    const inviteUrl = `${window.location.origin}/register?invitation_code=${user?.referralCode || 'ETHIOREWARDS'}`;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopiedInvite(true);
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+    setTimeout(() => setCopiedInvite(false), 2500);
+  };
 
   const handleDailyCheckIn = async () => {
     try {
@@ -68,41 +79,44 @@ export const CustomerHome = () => {
     }
   };
 
-  const handleCopyInvite = () => {
-    const inviteUrl = `${window.location.origin}/register?invitation_code=${user?.referralCode || 'ETHIOREWARDS'}`;
-    navigator.clipboard.writeText(inviteUrl);
-    setCopiedInvite(true);
-    confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
-    setTimeout(() => setCopiedInvite(false), 2500);
-  };
+  const displayName = user?.name || (user?.phone ? user.phone.slice(-4) : 'Guest');
 
   return (
-    <div className="min-h-screen bg-slate-100/70 pb-28 pt-4 px-3 sm:px-6 max-w-lg mx-auto">
-      {/* Top Greeting matching Image 2 */}
-      <div className="mb-4 px-2 flex items-center justify-between">
-        <div>
-          <p className="text-xs text-slate-500 font-semibold leading-none">
-            {isAmharic ? 'ሰላም፣' : 'Hello,'}
-          </p>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5 font-mono">
-            {displayPhone}
-          </h2>
-          <p className="text-[11px] text-slate-400 font-medium">
-            {isAmharic ? 'እንኳን ደህና መጡ!' : 'Welcome!'}
-          </p>
+    <div className="min-h-screen bg-[#080d1a] text-slate-100 pb-28 pt-3 px-3 sm:px-5 max-w-lg mx-auto">
+      {/* Top Header matching Screenshot 1 */}
+      <div className="flex items-center justify-between py-2 mb-3">
+        <div className="flex items-center space-x-2.5">
+          {/* Green P&G logo badge */}
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-green-500 flex items-center justify-center font-black text-white text-xs shadow-md shadow-emerald-500/30">
+            P&G
+          </div>
+          <div>
+            <h2 className="text-sm font-black text-white leading-tight">
+              Hi, {displayName}
+            </h2>
+            <p className="text-[10px] text-emerald-400 font-bold">
+              Welcome To P&G
+            </p>
+          </div>
         </div>
-        <div className="w-11 h-11 rounded-2xl bg-white shadow-sm border border-slate-200/80 flex items-center justify-center text-xl">
-          🎁
-        </div>
+
+        {/* Support Button */}
+        <button
+          onClick={() => alert(isAmharic ? 'የደንበኞች ድጋፍ አገልግሎት፡ Telegram @EthioRewardsSupport' : 'Support: Telegram @EthioRewardsSupport')}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 text-emerald-400 font-bold text-xs hover:bg-slate-800 active:scale-95 transition-all shadow-md shadow-emerald-950/40"
+        >
+          <Headphones className="w-3.5 h-3.5" />
+          <span>Support</span>
+        </button>
       </div>
 
-      {/* Checkin Alert Banner */}
+      {/* Checkin Status Banner */}
       {checkInStatus && (
         <div
-          className={`mb-4 p-3.5 rounded-2xl text-xs font-bold flex items-center space-x-2 animate-fade-in shadow-sm ${
+          className={`mb-3 p-3 rounded-2xl text-xs font-bold flex items-center space-x-2 animate-fade-in ${
             checkInStatus.type === 'success'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-amber-100 text-amber-900 border border-amber-200'
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+              : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
           }`}
         >
           <span>{checkInStatus.type === 'success' ? '💎' : 'ℹ️'}</span>
@@ -110,184 +124,200 @@ export const CustomerHome = () => {
         </div>
       )}
 
-      {/* Emerald Green Balance Card matching Image 2 */}
-      <div className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 text-white shadow-xl shadow-emerald-700/25 mb-6">
-        {/* Subtle wavy chart background line */}
-        <svg
-          className="absolute inset-0 w-full h-full opacity-15 pointer-events-none"
-          viewBox="0 0 400 200"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M 0,160 Q 100,120 200,140 T 400,90 L 400,200 L 0,200 Z"
-            fill="white"
-          />
-          <path
-            d="M 0,160 Q 100,120 200,140 T 400,90"
-            fill="none"
-            stroke="white"
-            strokeWidth="3"
-          />
-        </svg>
+      {/* Hero Card: "Invite friends, earn rewards" matching Screenshot 1 */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0d3326] via-[#0b241d] to-[#0a1a1b] border border-emerald-500/30 p-5 mb-4 shadow-xl shadow-emerald-950/40">
+        <div className="relative z-10 space-y-3">
+          <h2 className="text-xl sm:text-2xl font-black text-white leading-tight max-w-[200px]">
+            {isAmharic ? 'ጓደኞችዎን ይጋብዙ፣ ሽልማቶችን ያግኙ' : 'Invite friends, earn rewards'}
+          </h2>
 
-        <div className="relative z-10 space-y-4">
-          {/* Header row with ETB badge */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase font-bold text-emerald-100/90 tracking-wider">
-              {isAmharic ? 'አጠቃላይ ሂሳብ' : 'Total balance'}
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-white/20 text-white border border-white/20">
-              ETB
-            </span>
-          </div>
-
-          {/* Large Balance Display */}
-          <div>
-            <div className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              ETB {totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-            <p className="text-xs text-emerald-200 font-semibold mt-1 flex items-center space-x-1.5">
-              <span>{isAmharic ? 'የዛሬ ትርፍ' : 'Total income'}</span>
-              <span className="font-bold text-amber-300">
-                + ETB {(etbValue > 0 ? etbValue : 0).toFixed(2)}
-              </span>
-            </p>
-          </div>
-
-          {/* Two Pill Action Buttons: top up (Yellow) & Withdraw (Green) */}
-          <div className="pt-2 grid grid-cols-2 gap-3">
-            <Link
-              to="/finance?tab=deposit"
-              className="py-3 px-4 rounded-full bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-400/30 flex items-center justify-center space-x-1.5 active:scale-95 transition-all"
-            >
-              <span className="text-base">👛</span>
-              <span>{isAmharic ? 'ገንዘብ አስገባ' : 'top up'}</span>
-            </Link>
-
-            <Link
-              to="/finance?tab=withdraw"
-              className="py-3 px-4 rounded-full bg-emerald-900/60 hover:bg-emerald-900/80 text-white font-bold text-xs sm:text-sm border border-emerald-400/30 shadow-xs flex items-center justify-center space-x-1.5 active:scale-95 transition-all"
-            >
-              <span className="text-base">🪙</span>
-              <span>{isAmharic ? 'ገንዘብ አውጣ' : 'Withdraw'}</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* 2x2 Grid of 3D Feature Cards matching Image 2 */}
-      <div className="grid grid-cols-2 gap-3.5 mb-6">
-        {/* Card 1: Daily check-in */}
-        <button
-          onClick={handleDailyCheckIn}
-          disabled={checkInLoading}
-          className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md hover:border-emerald-300 transition-all flex flex-col items-center text-center group active:scale-95"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-3xl mb-2.5 group-hover:scale-105 transition-transform">
-            📅
-          </div>
-          <h3 className="font-black text-xs sm:text-sm text-slate-900">
-            {isAmharic ? 'ዕለታዊ ጉርሻ' : 'Daily check-in'}
-          </h3>
-          <span className="text-[10px] text-amber-600 font-bold mt-0.5">
-            +10 {t('pointsShort')} (1.00 ETB)
-          </span>
-        </button>
-
-        {/* Card 2: Products */}
-        <Link
-          to="/redeem"
-          className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md hover:border-purple-300 transition-all flex flex-col items-center text-center group active:scale-95"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-3xl mb-2.5 group-hover:scale-105 transition-transform">
-            💰
-          </div>
-          <h3 className="font-black text-xs sm:text-sm text-slate-900">
-            {isAmharic ? 'ምርቶች እና ቫውቸር' : 'Products'}
-          </h3>
-          <span className="text-[10px] text-purple-600 font-bold mt-0.5">
-            {isAmharic ? 'ነጥብ መለወጫ' : 'Earn Rewards'}
-          </span>
-        </Link>
-
-        {/* Card 3: My account */}
-        <button
-          onClick={() => setIsPassModalOpen(true)}
-          className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md hover:border-indigo-300 transition-all flex flex-col items-center text-center group active:scale-95"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl mb-2.5 group-hover:scale-105 transition-transform">
-            👑
-          </div>
-          <h3 className="font-black text-xs sm:text-sm text-slate-900">
-            {isAmharic ? 'የእኔ አካውንት' : 'My account'}
-          </h3>
-          <span className="text-[10px] text-indigo-600 font-bold mt-0.5">
-            {user?.tier || 'Bronze'} Member
-          </span>
-        </button>
-
-        {/* Card 4: Invite / Download */}
-        <button
-          onClick={handleCopyInvite}
-          className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md hover:border-blue-300 transition-all flex flex-col items-center text-center group active:scale-95"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-3xl mb-2.5 group-hover:scale-105 transition-transform">
-            ☁️
-          </div>
-          <h3 className="font-black text-xs sm:text-sm text-slate-900">
-            {copiedInvite
-              ? (isAmharic ? 'ኮፒ ተደርጓል!' : 'Copied!')
-              : (isAmharic ? 'ጋብዘው ያትርፉ' : 'Invite & Earn')}
-          </h3>
-          <span className="text-[10px] text-blue-600 font-bold mt-0.5">
-            +50 {t('pointsShort')} Bonus
-          </span>
-        </button>
-      </div>
-
-      {/* Information Banner matching bottom of Image 2 */}
-      <div className="rounded-3xl bg-slate-900 text-white p-5 shadow-sm space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <span className="text-xs font-bold text-amber-400">
-            {isAmharic ? 'ስለ ኢትዮ ሪዋርድስ መረጃ፦' : 'Information about:'}
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">
-            100% Verified
-          </span>
-        </div>
-
-        <ul className="space-y-2 text-xs text-slate-300">
-          <li className="flex items-center space-x-2">
-            <span>💰</span>
-            <span>{isAmharic ? 'በኢትዮጵያ በቴሌብር እና በባንክ ገንዘብ ማግኘት' : 'Make Money Online in Ethiopia'}</span>
-          </li>
-          <li className="flex items-center space-x-2">
-            <span>📱</span>
-            <span>{isAmharic ? 'በስልክዎ ገንዘብ የሚያገኙበት ፈጣን መንገድ' : 'Ways to Earn Money Using Your Phone'}</span>
-          </li>
-          <li className="flex items-center space-x-2">
-            <span>🏦</span>
-            <span>{isAmharic ? 'ቀጥታ ወደ ቴሌብር እና ንግድ ባንክ ፈጣን ወጪ' : 'Instant Telebirr & CBE Birr Withdrawals'}</span>
-          </li>
-          <li className="flex items-center space-x-2">
-            <span>🛡️</span>
-            <span>{isAmharic ? 'በአስተዳዳሪ የተረጋገጠ እና የታመነ መድረክ' : 'Safe, Verified & Admin-Controlled Platform'}</span>
-          </li>
-        </ul>
-
-        <div className="pt-2 border-t border-slate-800">
-          <Link
-            to="/finance"
-            className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors"
+          <button
+            onClick={handleCopyInvite}
+            className="px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-emerald-800 font-black text-xs shadow-md shadow-white/10 flex items-center space-x-1.5 active:scale-95 transition-all"
           >
-            <span>{isAmharic ? 'ወደ ገንዘብ ማስገቢያ/ማውጫ ይሂዱ' : 'Go to Deposit & Withdraw'}</span>
-            <ChevronRight className="w-4 h-4" />
+            <span>{copiedInvite ? (isAmharic ? 'ኮፒ ተደርጓል!' : 'Copied!') : (isAmharic ? 'አሁን ይጋብዙ >' : 'Invite now >')}</span>
+          </button>
+        </div>
+
+        {/* Decorative background glow */}
+        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-emerald-500/10 to-transparent pointer-events-none" />
+      </div>
+
+      {/* P&G Trusted Worldwide Promotional Card matching Screenshot 1 */}
+      <div className="relative rounded-3xl bg-gradient-to-r from-blue-900/60 via-slate-900 to-sky-950/80 border border-slate-800 p-4 mb-4 shadow-lg overflow-hidden">
+        <div className="flex items-center justify-between mb-2">
+          <div className="w-12 h-6 rounded-full bg-blue-600 flex items-center justify-center font-black text-white text-[10px] shadow-sm">
+            P&G
+          </div>
+          <span className="text-xs font-black tracking-wide text-white/90">
+            Trusted Worldwide
+          </span>
+        </div>
+
+        <div className="flex items-center justify-around py-2 opacity-90">
+          <span className="text-xs font-black text-blue-200">Ariel</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-xs font-black text-emerald-300">Pampers</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-xs font-black text-pink-300">Always</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-xs font-black text-amber-300">Braun</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-xs font-black text-sky-300">Crest</span>
+        </div>
+      </div>
+
+      {/* 4 Quick Action Circles matching Screenshot 1 */}
+      <div className="rounded-3xl bg-[#0f172a] border border-slate-800 p-4 shadow-lg mb-4">
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {/* Recharge (Pink/Purple) */}
+          <Link
+            to="/finance?tab=deposit"
+            className="flex flex-col items-center group active:scale-95 transition-transform"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-pink-500/40 text-pink-400 flex items-center justify-center text-lg shadow-md group-hover:scale-105 transition-transform">
+              👛
+            </div>
+            <span className="text-[11px] font-bold text-slate-300 mt-2">
+              {isAmharic ? 'መሙያ' : 'Recharge'}
+            </span>
+          </Link>
+
+          {/* Withdraw (Blue) */}
+          <Link
+            to="/withdraw"
+            className="flex flex-col items-center group active:scale-95 transition-transform"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-lg shadow-md group-hover:scale-105 transition-transform">
+              🪙
+            </div>
+            <span className="text-[11px] font-bold text-slate-300 mt-2">
+              {isAmharic ? 'ማውጫ' : 'Withdraw'}
+            </span>
+          </Link>
+
+          {/* Team (Blue with users icon) */}
+          <Link
+            to="/account"
+            className="flex flex-col items-center group active:scale-95 transition-transform"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-blue-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-base shadow-md group-hover:scale-105 transition-transform">
+              <Users className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-bold text-slate-300 mt-2">
+              {isAmharic ? 'ቡድን' : 'Team'}
+            </span>
+          </Link>
+
+          {/* VIP (Gold Crown) */}
+          <Link
+            to="/invest"
+            className="flex flex-col items-center group active:scale-95 transition-transform"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-base shadow-md group-hover:scale-105 transition-transform">
+              <Gem className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] font-bold text-slate-300 mt-2">
+              VIP
+            </span>
           </Link>
         </div>
       </div>
 
-      {/* Loyalty QR Modal */}
-      <DigitalCardModal isOpen={isPassModalOpen} onClose={() => setIsPassModalOpen(false)} />
+      {/* Live Dividend Payout Ticker */}
+      <div className="rounded-2xl bg-slate-900/80 border border-slate-800/90 px-4 py-2.5 mb-4 flex items-center justify-between text-xs">
+        <div className="flex items-center space-x-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          <span className="text-slate-400 text-[11px]">
+            {dividendFeed[tickerIndex].phone} received {dividendFeed[tickerIndex].amount}
+          </span>
+        </div>
+        <span className="text-[10px] font-bold text-emerald-400">
+          {dividendFeed[tickerIndex].product}
+        </span>
+      </div>
+
+      {/* Section | Activity Center matching Screenshot 1 */}
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center space-x-2 px-1">
+          <div className="w-1.5 h-4 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400" />
+          <span className="text-xs font-black tracking-wider uppercase text-slate-200">
+            {isAmharic ? 'የተግባር ማዕከል' : 'Activity Center'}
+          </span>
+        </div>
+
+        {/* Card 1: Invite link with COPY button */}
+        <div className="rounded-3xl bg-[#0f172a] border border-slate-800 p-4 flex items-center justify-between shadow-lg">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl shadow-md">
+              👥
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-sm font-black text-white">
+                {isAmharic ? 'የመጋበዣ ሊንክ' : 'Invite link'}
+              </h3>
+              <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
+                {isAmharic ? 'የማነቃቂያ ሽልማት ' : 'Activation reward '}
+                <span className="text-emerald-400 font-black">Br170</span>
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleCopyInvite}
+            className="px-3.5 py-1.5 rounded-full border border-emerald-500/60 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-black text-xs active:scale-95 transition-all"
+          >
+            {copiedInvite ? (isAmharic ? 'ኮፒ ሆኗል!' : 'COPIED') : 'COPY'}
+          </button>
+        </div>
+
+        {/* Card 2: Lucky wheel with chevron */}
+        <Link
+          to="/account"
+          className="rounded-3xl bg-[#0f172a] border border-slate-800 p-4 flex items-center justify-between shadow-lg hover:border-amber-500/40 transition-all block"
+        >
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xl shadow-md">
+              🎁
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-sm font-black text-white">
+                {isAmharic ? 'የዕድል እሽክርክሪት' : 'Lucky wheel'}
+              </h3>
+              <p className="text-[11px] text-amber-400 font-semibold mt-0.5">
+                {isAmharic ? '100% የማሸነፍ ዕድል' : '100% win rate'}
+              </p>
+            </div>
+          </div>
+
+          <ChevronRight className="w-5 h-5 text-slate-500" />
+        </Link>
+
+        {/* Card 3: Daily check-in */}
+        <button
+          onClick={handleDailyCheckIn}
+          disabled={checkInLoading}
+          className="w-full rounded-3xl bg-[#0f172a] border border-slate-800 p-4 flex items-center justify-between shadow-lg hover:border-emerald-500/40 transition-all text-left"
+        >
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center text-xl shadow-md">
+              📅
+            </div>
+            <div>
+              <h3 className="text-xs sm:text-sm font-black text-white">
+                {isAmharic ? 'የዕለት ጉርሻ' : 'Daily Check-in'}
+              </h3>
+              <p className="text-[11px] text-blue-400 font-semibold mt-0.5">
+                +10 {t('pointsShort')} (1.00 ETB)
+              </p>
+            </div>
+          </div>
+
+          <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-bold">
+            {checkInLoading ? '...' : (isAmharic ? 'ውሰድ' : 'Claim')}
+          </span>
+        </button>
+      </div>
     </div>
   );
 };

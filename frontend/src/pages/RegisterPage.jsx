@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Phone,
   Lock,
   User,
   Tag,
   Eye,
   EyeOff,
-  ArrowRight,
   Sparkles,
-  Gift,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,12 +20,11 @@ export const RegisterPage = () => {
     searchParams.get('invitation_code') ||
     searchParams.get('ref') ||
     searchParams.get('code') ||
-    '';
+    'F7337056AD';
 
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [invitationCode, setInvitationCode] = useState(initialInvite);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -62,19 +58,10 @@ export const RegisterPage = () => {
       return;
     }
 
-    if (confirmPassword && password !== confirmPassword) {
-      setError(
-        isAmharic
-          ? 'የይለፍ ቃሎቹ አይመሳሰሉም። እባክዎ በትክክል ያስገቡ።'
-          : 'Passwords do not match.'
-      );
-      return;
-    }
-
     setLoading(true);
     try {
       await register({
-        name: name.trim() || `User-${cleanPhone.slice(-4)}`,
+        name: name.trim() || `er-${cleanPhone.slice(-4)}`,
         phone: cleanPhone,
         password,
         referralCodeInput: invitationCode.trim().toUpperCase(),
@@ -94,99 +81,77 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4 selection:bg-emerald-500 selection:text-white relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#080d1a] text-slate-100 flex flex-col justify-center items-center p-4 selection:bg-emerald-500 selection:text-slate-950 relative overflow-hidden">
+      {/* Background Neon Emerald Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Mobile-App Styled Shell (PGLife style, No OTP) */}
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 relative z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-amber-400 flex items-center justify-center text-white text-3xl mx-auto shadow-lg shadow-emerald-600/25">
-            🎁
-          </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            {isAmharic ? 'አዲስ አካውንት ይክፈቱ' : 'Create Account'}
-          </h1>
-          <p className="text-xs text-emerald-700 font-bold bg-emerald-50 py-1 px-3 rounded-full inline-block border border-emerald-100">
-            {isAmharic ? '🎉 100 ነፃ ነጥብ (10 ብር) ወዲያውኑ ያግኙ!' : '🎉 Get 100 Free Welcome Points Instantly!'}
-          </p>
+      {/* Brand Header matching Screenshot 1 */}
+      <div className="w-full max-w-sm mb-4 text-left space-y-1">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-green-500 flex items-center justify-center font-black text-white text-base shadow-lg shadow-emerald-500/30 mb-3">
+          P&G
         </div>
+        <h1 className="text-2xl font-black text-white tracking-tight">
+          {isAmharic ? 'አካውንት ይክፈቱ' : 'Create account'}
+        </h1>
+        <p className="text-xs text-slate-400">
+          {isAmharic ? 'ወደ P&G ይቀላቀሉና ኢንቨስት ማድረግ ይጀምሩ' : 'Join P&G and start investing'}
+        </p>
+      </div>
 
-        {/* Tab switch between Login and Register */}
-        <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 border border-slate-200/80 text-xs font-bold">
+      {/* Dark Cyberpunk Neon Card matching Screenshot */}
+      <div className="w-full max-w-sm bg-[#0f172a] rounded-3xl border border-emerald-500/30 p-6 shadow-2xl shadow-emerald-950/40 relative z-10 space-y-5">
+        {/* Tab switch: [ Log in ] [ Sign up ] */}
+        <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-black">
           <Link
             to="/login"
-            className="py-2.5 rounded-xl text-slate-500 hover:text-slate-900 text-center transition-colors flex items-center justify-center space-x-1.5"
+            className="py-2.5 rounded-xl text-slate-400 hover:text-white text-center transition-colors flex items-center justify-center"
           >
-            <span>{isAmharic ? 'መግቢያ (Log in)' : 'Log in'}</span>
+            <span>Log in</span>
           </Link>
           <button
             type="button"
-            className="py-2.5 rounded-xl bg-white text-emerald-700 shadow-sm transition-all flex items-center justify-center space-x-1.5"
+            className="py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 text-slate-950 shadow-md shadow-emerald-500/30 transition-all flex items-center justify-center font-black"
           >
-            <span>{isAmharic ? 'ምዝገባ (Register)' : 'Register'}</span>
+            <span>Sign up</span>
           </button>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center space-x-2 animate-shake">
+          <div className="p-3.5 rounded-2xl bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-semibold flex items-center space-x-2 animate-shake">
             <span>⚠️</span>
             <span>{error}</span>
           </div>
         )}
 
-        {/* Simple Registration Form (NO OTP Required!) */}
-        <form onSubmit={handleSubmit} className="space-y-3.5">
-          {/* Phone Number with +251 country prefix */}
+        {/* Registration Form (NO OTP Required!) */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* PHONE NUMBER */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              {isAmharic ? 'የስልክ ቁጥር' : 'Phone Number'}
+            <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1.5">
+              PHONE NUMBER
             </label>
-            <div className="flex rounded-2xl border-2 border-slate-200 focus-within:border-emerald-500 overflow-hidden bg-slate-50/50 transition-colors">
-              <span className="inline-flex items-center px-3.5 bg-slate-100 text-slate-700 font-mono font-bold text-xs border-r border-slate-200 shrink-0">
-                🇪🇹 +251
+            <div className="flex rounded-2xl bg-slate-900 border border-slate-800 focus-within:border-emerald-500 overflow-hidden transition-colors">
+              <span className="inline-flex items-center px-3.5 bg-slate-950 text-slate-300 font-mono font-bold text-xs border-r border-slate-800 shrink-0">
+                +251
               </span>
-              <div className="relative flex-1 flex items-center">
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="911223344"
-                  className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-mono font-bold text-slate-900 bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Full Name / Nickname */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              {isAmharic ? 'ሙሉ ስም / ቅጽል ስም' : 'Full Name / Nickname'}
-            </label>
-            <div className="relative flex items-center rounded-2xl border-2 border-slate-200 focus-within:border-emerald-500 overflow-hidden bg-slate-50/50 transition-colors">
-              <div className="pl-3.5 text-slate-400">
-                <User className="w-4 h-4" />
-              </div>
               <input
-                type="text"
+                type="tel"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Abreham Tadesse"
-                className="w-full px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 bg-transparent focus:outline-none"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="932441044"
+                className="w-full px-3.5 py-3 text-xs sm:text-sm font-mono font-bold text-white bg-transparent focus:outline-none placeholder-slate-600"
               />
             </div>
           </div>
 
-          {/* Password */}
+          {/* PASSWORD */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              {isAmharic ? 'የይለፍ ቃል ፍጠር' : 'Create Password'}
+            <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1.5">
+              PASSWORD
             </label>
-            <div className="relative flex items-center rounded-2xl border-2 border-slate-200 focus-within:border-emerald-500 overflow-hidden bg-slate-50/50 transition-colors">
-              <div className="pl-3.5 text-slate-400">
+            <div className="relative flex items-center rounded-2xl bg-slate-900 border border-slate-800 focus-within:border-emerald-500 overflow-hidden transition-colors">
+              <div className="pl-3.5 text-slate-500">
                 <Lock className="w-4 h-4" />
               </div>
               <input
@@ -195,55 +160,54 @@ export const RegisterPage = () => {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 bg-transparent focus:outline-none"
+                placeholder="••••••"
+                className="w-full px-3 py-3 text-xs sm:text-sm font-semibold text-white bg-transparent focus:outline-none placeholder-slate-600"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                className="pr-3.5 text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          {/* Confirm Password */}
+          {/* NICKNAME */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              {isAmharic ? 'የይለፍ ቃል አረጋግጥ' : 'Confirm Password'}
+            <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1.5">
+              NICKNAME
             </label>
-            <div className="relative flex items-center rounded-2xl border-2 border-slate-200 focus-within:border-emerald-500 overflow-hidden bg-slate-50/50 transition-colors">
-              <div className="pl-3.5 text-slate-400">
-                <Lock className="w-4 h-4" />
+            <div className="relative flex items-center rounded-2xl bg-slate-900 border border-slate-800 focus-within:border-emerald-500 overflow-hidden transition-colors">
+              <div className="pl-3.5 text-slate-500">
+                <User className="w-4 h-4" />
               </div>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type="text"
                 required
-                minLength={6}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 bg-transparent focus:outline-none"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="er"
+                className="w-full px-3 py-3 text-xs sm:text-sm font-semibold text-white bg-transparent focus:outline-none placeholder-slate-600"
               />
             </div>
           </div>
 
-          {/* Invitation Code (Auto-populated from URL) */}
+          {/* INVITATION CODE */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              {isAmharic ? 'የመጋበዣ ኮድ (Invitation Code)' : 'Invitation Code'}
+            <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1.5">
+              INVITATION CODE
             </label>
-            <div className="relative flex items-center rounded-2xl border-2 border-slate-200 focus-within:border-emerald-500 overflow-hidden bg-slate-50/50 transition-colors">
-              <div className="pl-3.5 text-slate-400">
+            <div className="relative flex items-center rounded-2xl bg-slate-900 border border-slate-800 focus-within:border-emerald-500 overflow-hidden transition-colors">
+              <div className="pl-3.5 text-slate-500">
                 <Tag className="w-4 h-4" />
               </div>
               <input
                 type="text"
                 value={invitationCode}
                 onChange={(e) => setInvitationCode(e.target.value)}
-                placeholder="e.g. F7337056AD"
-                className="w-full px-3 py-2.5 text-xs sm:text-sm font-mono font-bold uppercase text-slate-900 bg-transparent focus:outline-none"
+                placeholder="F7337056AD"
+                className="w-full px-3 py-3 text-xs sm:text-sm font-mono font-bold text-emerald-400 bg-transparent focus:outline-none uppercase tracking-wider"
               />
             </div>
           </div>
@@ -252,25 +216,24 @@ export const RegisterPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 active:scale-98 transition-all flex items-center justify-center space-x-2"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-green-500 hover:from-emerald-400 hover:to-green-400 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/30 flex items-center justify-center space-x-2 active:scale-98 transition-all disabled:opacity-60"
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <>
-                <span>{isAmharic ? 'አካውንት ፍጠር (Create Account)' : 'Create Account'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
+              <span>Create account</span>
             )}
           </button>
         </form>
 
-        {/* Footer Link */}
-        <div className="text-center text-xs text-slate-500">
-          {isAmharic ? 'ቀደም ሲል አካውንት አለዎት?' : 'Already have an account?'}{' '}
-          <Link to="/login" className="font-extrabold text-emerald-600 hover:underline">
-            {isAmharic ? 'ይግቡ (Log in)' : 'Log in'}
-          </Link>
+        {/* Footer switch to Log in */}
+        <div className="text-center pt-2">
+          <p className="text-xs text-slate-400">
+            Already have an account?{' '}
+            <Link to="/login" className="font-black text-emerald-400 hover:underline">
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

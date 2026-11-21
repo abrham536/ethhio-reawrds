@@ -61,9 +61,10 @@ export const FinancePage = () => {
   const [selectedChannelIdx, setSelectedChannelIdx] = useState(0);
   const currentAccount = ACCOUNTS[selectedChannelIdx];
 
-  // Deposit Form State (Default 1500 ETB matching Image 1)
-  const [orderAmount, setOrderAmount] = useState(1500);
-  const [customAmountInput, setCustomAmountInput] = useState('1500');
+  // Deposit Form State (Takes URL amount param e.g. from InvestPage or defaults to 500)
+  const paramAmount = Number(searchParams.get('amount'));
+  const [orderAmount, setOrderAmount] = useState(paramAmount > 0 ? paramAmount : 500);
+  const [customAmountInput, setCustomAmountInput] = useState(String(paramAmount > 0 ? paramAmount : 500));
   const [pastedProof, setPastedProof] = useState('');
   const [screenshotBase64, setScreenshotBase64] = useState('');
   const [screenshotFileName, setScreenshotFileName] = useState('');
@@ -357,7 +358,7 @@ export const FinancePage = () => {
                 {isAmharic ? 'የማስገቢያ መጠን ይምረጡ' : 'Select Top Up Amount (ETB)'}:
               </span>
               <div className="grid grid-cols-3 gap-2 text-xs font-black">
-                {[500, 1000, 1500, 3000, 5000, 10000].map((amt) => (
+                {[500, 1188, 2888, 3060, 6860, 36188].map((amt) => (
                   <button
                     key={amt}
                     type="button"
@@ -367,11 +368,11 @@ export const FinancePage = () => {
                     }}
                     className={`py-2 px-2 rounded-xl border text-center transition-all ${
                       orderAmount === amt
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-xs scale-102'
+                        ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-slate-950 font-black border-emerald-400 shadow-md shadow-emerald-500/30 scale-102'
                         : 'bg-slate-900 text-slate-200 border-slate-700 hover:border-slate-500'
                     }`}
                   >
-                    ETB {amt.toLocaleString()}
+                    Br {amt.toLocaleString()}
                   </button>
                 ))}
               </div>

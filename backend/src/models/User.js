@@ -84,6 +84,33 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    vipLevel: {
+      type: Number,
+      default: 0,
+    },
+    productIncome: {
+      type: Number,
+      default: 0,
+    },
+    rechargeBalance: {
+      type: Number,
+      default: 0,
+    },
+    withdrawBalance: {
+      type: Number,
+      default: 0,
+    },
+    tradePassword: {
+      type: String,
+      default: '',
+    },
+    bankCard: {
+      bank: { type: String, default: '' },
+      accountHolderName: { type: String, default: '' },
+      accountNumber: { type: String, default: '' },
+      isBound: { type: Boolean, default: false },
+      boundAt: { type: Date, default: null },
+    },
   },
   { timestamps: true }
 );

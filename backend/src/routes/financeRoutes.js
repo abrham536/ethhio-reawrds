@@ -5,6 +5,8 @@ import {
   getMyDeposits,
   submitWithdrawal,
   getMyWithdrawals,
+  bindBankCard,
+  getBankCard,
   getAdminDeposits,
   decideDeposit,
   getAdminWithdrawals,
@@ -24,6 +26,8 @@ router.post('/deposit', authorize('customer', 'admin'), submitDeposit);
 router.get('/my-deposits', authorize('customer', 'admin'), getMyDeposits);
 router.post('/withdraw', authorize('customer', 'admin'), submitWithdrawal);
 router.get('/my-withdrawals', authorize('customer', 'admin'), getMyWithdrawals);
+router.post('/bind-card', authorize('customer', 'admin'), bindBankCard);
+router.get('/bank-card', authorize('customer', 'admin'), getBankCard);
 
 // Admin-only approval routes
 router.get('/admin/deposits', authorize('admin'), getAdminDeposits);

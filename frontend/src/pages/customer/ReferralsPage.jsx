@@ -17,8 +17,8 @@ export const ReferralsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50/50 py-6 sm:py-8 px-3 sm:px-6 lg:px-8 pb-24 lg:pb-12">
+      <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         {/* Header Banner */}
         <div className="relative rounded-3xl bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-10 shadow-xl overflow-hidden">
           <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-white/5 pointer-events-none" />

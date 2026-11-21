@@ -34,6 +34,7 @@ export const translations = {
     tierPerk: "የደረጃ ጥቅም",
 
     // Navbar
+    navHome: "ዋና ገጽ",
     navMerchants: "አጋር ነጋዴዎች እና ቅናሾች",
     navRedeem: "ነጥብ መቀየሪያ እና ኤርታይም",
     navFinance: "ገንዘብ ማስገቢያ/ማውጫ",
@@ -276,6 +277,7 @@ export const translations = {
     tierPerk: "Tier Perk",
 
     // Navbar
+    navHome: "Home",
     navMerchants: "Merchants & Deals",
     navRedeem: "Redeem & Airtime",
     navFinance: "Deposit / Withdraw",

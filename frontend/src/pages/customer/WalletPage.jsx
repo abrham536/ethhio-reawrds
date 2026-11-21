@@ -48,7 +48,7 @@ export const WalletPage = () => {
   const tier = user?.tier || 'Bronze';
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/50 py-6 sm:py-8 px-3 sm:px-6 lg:px-8 pb-24 lg:pb-12">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

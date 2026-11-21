@@ -1,178 +1,146 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Search,
   Sparkles,
   QrCode,
   ArrowRight,
   Gift,
-  ShoppingBag,
-  Coffee,
-  Fuel,
-  Laptop,
-  HeartPulse,
-  Award,
+  ArrowDownLeft,
+  ArrowUpRight,
+  ShieldCheck,
+  Share2,
+  Wallet,
+  CheckCircle,
+  HelpCircle,
   TrendingUp,
-  MapPin,
-  Phone,
-  CheckCircle2,
-  X,
 } from 'lucide-react';
-import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { MerchantCard } from '../../components/MerchantCard';
 import { DigitalCardModal } from '../../components/DigitalCardModal';
 
 export const CustomerHome = () => {
   const { user, isAmharic, t } = useAuth();
-  const [merchants, setMerchants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMerchant, setSelectedMerchant] = useState(null);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
-
-  const CATEGORIES = [
-    { id: 'All', name: t('catAll'), icon: ShoppingBag },
-    { id: 'Cafe & Restaurant', name: t('catCafes'), icon: Coffee },
-    { id: 'Supermarket', name: t('catSupermarkets'), icon: ShoppingBag },
-    { id: 'Fuel Station', name: t('catFuel'), icon: Fuel },
-    { id: 'Electronics', name: t('catElectronics'), icon: Laptop },
-    { id: 'Health & Pharmacy', name: t('catHealth'), icon: HeartPulse },
-  ];
-
-  useEffect(() => {
-    fetchMerchants();
-  }, [selectedCategory, searchQuery]);
-
-  const fetchMerchants = async () => {
-    try {
-      setLoading(true);
-      const params = {};
-      if (selectedCategory !== 'All') params.category = selectedCategory;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
-
-      const res = await api.get('/merchants', { params });
-      if (res.data.success) {
-        setMerchants(res.data.merchants);
-      }
-    } catch (err) {
-      console.error('Error fetching merchants:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const points = user?.pointsBalance || 0;
   const etbValue = (points * 0.1).toFixed(2);
+  const walletCash = user?.walletBalanceETB || 0;
+  const totalBalance = walletCash + Number(etbValue);
   const tier = user?.tier || 'Bronze';
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-slate-900 text-white pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/60 pb-24 lg:pb-16">
+      {/* Hero Banner - Mobile Friendly */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950 text-white pt-6 sm:pt-10 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 shadow-md">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Column: Greeting & Headline */}
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-700/60 border border-emerald-500/30 text-emerald-200 text-xs font-semibold mb-4 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto relative z-10 space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {/* Left Headline */}
+            <div className="space-y-3">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold backdrop-blur-xs">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>{t('heroTagline')}</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-                {t('heroTitlePrefix')}
-                <span className="text-amber-400">{t('heroTitleHighlight')}</span>
-                {t('heroTitleSuffix')}
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                {isAmharic ? (
+                  <>
+                    ገንዘብ ያስገቡ፣ <span className="text-amber-400">ትርፍ ያግኙ</span>፣ በማንኛውም ጊዜ ያውጡ!
+                  </>
+                ) : (
+                  <>
+                    Deposit, <span className="text-amber-400">Earn Profit</span> & Cashout Anytime!
+                  </>
+                )}
               </h1>
 
-              <p className="mt-3 text-slate-300 text-sm sm:text-base max-w-xl leading-relaxed">
-                {t('heroSubtitle')}
+              <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                {isAmharic
+                  ? 'በቴሌብር ወይም በባንክ ገንዘብ ያስገቡ፣ በግዢዎችዎ ላይ ተመላሽ ገንዘብ እና ነጥብ ይሰብስቡ፣ ያገኙትን ትርፍ ደግሞ በአስተዳዳሪው ማረጋገጫ በቀላሉ ያውጡ።'
+                  : 'Deposit via Telebirr or Bank, collect instant cashback and rewards on purchases, and withdraw your profits securely with admin verification.'}
               </p>
 
-              {/* Action Buttons */}
-              <div className="mt-6 flex flex-wrap items-center gap-3">
+              {/* Action Buttons for Mobile & Desktop */}
+              <div className="pt-2 flex flex-wrap items-center gap-2.5">
+                <Link
+                  to="/finance"
+                  className="flex items-center space-x-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
+                >
+                  <ArrowDownLeft className="w-4 h-4" />
+                  <span>{t('tabDeposit')}</span>
+                </Link>
+
+                <Link
+                  to="/finance"
+                  className="flex items-center space-x-2 px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md shadow-blue-600/20 active:scale-95 transition-all"
+                >
+                  <ArrowUpRight className="w-4 h-4" />
+                  <span>{t('tabWithdraw')}</span>
+                </Link>
+
                 <button
                   onClick={() => setIsPassModalOpen(true)}
-                  className="flex items-center space-x-2 px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex items-center space-x-1.5 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs sm:text-sm backdrop-blur-xs transition-all"
                 >
-                  <QrCode className="w-4 h-4" />
+                  <QrCode className="w-4 h-4 text-amber-300" />
                   <span>{t('btnShowPass')}</span>
                 </button>
-
-                <a
-                  href="#merchants"
-                  className="flex items-center space-x-1.5 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-sm backdrop-blur-sm transition-all"
-                >
-                  <span>{t('btnExplorePartners')}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
               </div>
             </div>
 
-            {/* Right Column: Dynamic Wallet & Card Snapshot */}
-            <div className="lg:col-span-5">
-              <div className="relative rounded-3xl p-6 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-                <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                  <div>
-                    <span className="text-xs uppercase tracking-wider text-emerald-300 font-semibold">
-                      {t('walletSnapshotTitle')}
-                    </span>
-                    <h3 className="text-3xl font-black text-amber-300 mt-0.5">
-                      {points.toLocaleString()} <span className="text-sm font-bold text-white">{t('pointsShort')}</span>
-                    </h3>
-                    <p className="text-xs text-emerald-300 font-medium">
-                      ≈ {etbValue} {t('currency')} {t('cashValue')}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-sm">
-                      {tier} {t('tierLevel')}
-                    </span>
-                    <p className="text-[11px] text-slate-300 mt-1 font-mono">
-                      {user?.memberCode || 'ETR-DEMO'}
-                    </p>
+            {/* Right: Balance Card Widget */}
+            <div className="w-full lg:max-w-md rounded-3xl p-5 sm:p-6 bg-white/10 backdrop-blur-md border border-white/15 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div>
+                  <span className="text-[11px] uppercase tracking-wider text-emerald-300 font-bold block">
+                    {t('totalBalance')}
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black text-amber-300 mt-0.5">
+                    {totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}{' '}
+                    <span className="text-xs text-white font-bold">{t('currency')}</span>
                   </div>
                 </div>
-
-                {/* Quick actions row */}
-                <div className="grid grid-cols-2 gap-3 mt-4 text-xs font-semibold">
-                  <button
-                    onClick={() => setIsPassModalOpen(true)}
-                    className="p-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/10 flex items-center justify-center space-x-2 transition-all"
-                  >
-                    <QrCode className="w-4 h-4 text-amber-300" />
-                    <span>{t('btnShowPass')}</span>
-                  </button>
-                  <a
-                    href="/redeem"
-                    className="p-3 rounded-xl bg-emerald-500/80 hover:bg-emerald-500 text-white flex items-center justify-center space-x-2 transition-all"
-                  >
-                    <Gift className="w-4 h-4 text-white" />
-                    <span>{t('navRedeem')}</span>
-                  </a>
+                <div className="text-right">
+                  <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-xs">
+                    {tier}
+                  </span>
+                  <p className="text-[10px] text-slate-300 mt-1 font-mono">
+                    {user?.memberCode || 'ETR-MEMBER'}
+                  </p>
                 </div>
+              </div>
 
-                {/* Progress bar to next tier */}
-                <div className="mt-4 pt-3 border-t border-white/10">
-                  <div className="flex items-center justify-between text-[11px] text-slate-300 mb-1">
-                    <span>{t('nextTierGoal')}</span>
-                    <span className="font-bold text-amber-300">
-                      {tier === 'Platinum'
-                        ? t('topTierReached')
-                        : tier === 'Gold'
-                        ? `Platinum (10,000 ${t('pointsShort')})`
-                        : `Gold (4,000 ${t('pointsShort')})`}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.min(100, Math.round((points / 10000) * 100))}%`,
-                      }}
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-2xl bg-white/10 border border-white/10">
+                  <span className="text-[10px] text-slate-300 block uppercase font-semibold">
+                    {t('walletCash')}
+                  </span>
+                  <span className="text-base font-black text-white">
+                    {walletCash.toLocaleString()} {t('currency')}
+                  </span>
+                </div>
+                <div className="p-3 rounded-2xl bg-white/10 border border-white/10">
+                  <span className="text-[10px] text-slate-300 block uppercase font-semibold">
+                    {t('points')}
+                  </span>
+                  <span className="text-base font-black text-emerald-300">
+                    {points.toLocaleString()} {t('pointsShort')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Tier Progress */}
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between text-[11px] text-slate-300 mb-1">
+                  <span>{t('nextTierGoal')}</span>
+                  <span className="font-bold text-amber-300">
+                    {tier === 'Platinum' ? t('topTierReached') : 'Gold (4,000 Pts)'}
+                  </span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-white/20 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full"
+                    style={{ width: `${Math.min(100, Math.round((points / 4000) * 100))}%` }}
+                  />
                 </div>
               </div>
             </div>
@@ -180,236 +148,196 @@ export const CustomerHome = () => {
         </div>
       </section>
 
-      {/* Main Content Area */}
-      <main id="merchants" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
-        {/* Search and Filters Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 sm:p-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* Search Bar */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('searchPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all"
-              />
-            </div>
-
-            {/* Total Results Count */}
-            <div className="text-xs text-slate-500 font-semibold shrink-0">
-              {t('showingStores')}:{' '}
-              <span className="text-slate-900 font-bold">{merchants.length}</span>{' '}
-              {t('verifiedStores')}
-            </div>
-          </div>
-
-          {/* Category Filter Pills */}
-          <div className="flex items-center space-x-2 mt-4 overflow-x-auto pb-1 scrollbar-none">
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const isSelected = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
-                      : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{cat.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Merchants Grid */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
+      {/* Main Container */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 space-y-8 relative z-20">
+        {/* 4 Core Platform Services Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Deposit */}
+          <Link
+            to="/finance"
+            className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs hover:border-emerald-400 hover:shadow-md transition-all flex flex-col justify-between group"
+          >
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                {t('featuredPartners')}
-              </h2>
-              <p className="text-xs text-slate-500">
-                {t('featuredSubtitle')}
-              </p>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-72 rounded-2xl bg-slate-200/70" />
-              ))}
-            </div>
-          ) : merchants.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/80 p-8">
-              <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-slate-800">
-                {t('noMerchantsFound')}
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <ArrowDownLeft className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-sm text-slate-900 mb-1">
+                {t('tabDeposit')}
               </h3>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                {t('noMerchantsHint')}
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'በቴሌብር ወይም በባንክ ገንዘብ ያስገቡ፤ ስክሪንሹት ደረሰኝ ሲያያይዙ አስተዳዳሪው አረጋግጦ ወዲያው ገቢ ያደርጋል።'
+                  : 'Deposit funds via Telebirr or Bank. Upload receipt screenshot for instant admin verification.'}
               </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {merchants.map((merchant) => (
-                <MerchantCard
-                  key={merchant._id}
-                  merchant={merchant}
-                  onSelect={(m) => setSelectedMerchant(m)}
-                />
-              ))}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+              <span>{isAmharic ? 'ገንዘብ አስገባ' : 'Deposit Now'}</span>
+              <ArrowRight className="w-4 h-4" />
             </div>
-          )}
+          </Link>
+
+          {/* Card 2: Withdraw */}
+          <Link
+            to="/finance"
+            className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs hover:border-blue-400 hover:shadow-md transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <ArrowUpRight className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-sm text-slate-900 mb-1">
+                {t('tabWithdraw')}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'ያገኙትን ትርፍ እና ተመላሽ ገንዘብ በቀጥታ ወደ ቴሌብር ወይም የባንክ ሂሳብዎ በአስተዳዳሪው ፍቃድ ያውጡ።'
+                  : 'Withdraw your profits and cashback directly to Telebirr or Bank account with admin approval.'}
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
+              <span>{isAmharic ? 'ትርፍ አውጣ' : 'Withdraw Now'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
+
+          {/* Card 3: Redeem Points */}
+          <Link
+            to="/redeem"
+            className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <Gift className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-sm text-slate-900 mb-1">
+                {t('navRedeem')}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'ነጥቦችዎን ወደ ቴሌብር ጥሬ ገንዘብ፣ ለስልክ ካርድ (ኤርታይም) ወይም ለቅናሽ ቫውቸሮች ይለውጡ።'
+                  : 'Convert loyalty points to Telebirr cash, mobile airtime, or store discount vouchers.'}
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-800">
+              <span>{isAmharic ? 'ነጥብ ቀይር' : 'Redeem Now'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
+
+          {/* Card 4: Referrals */}
+          <Link
+            to="/referrals"
+            className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs hover:border-purple-400 hover:shadow-md transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <Share2 className="w-6 h-6" />
+              </div>
+              <h3 className="font-black text-sm text-slate-900 mb-1">
+                {t('navReferrals')}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'የመጋበዣ ኮድዎን ለወዳጅዎ ያካፍሉ። ሲመዘገቡ 100 ነጥብ ያገኛሉ፣ እርስዎም 50 ነጥብ ወዲያው ይሸለማሉ!'
+                  : 'Invite friends using your code. They receive 100 welcome points, and you earn 50 instant bonus points!'}
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-purple-700">
+              <span>{isAmharic ? 'ጋብዘው ያትርፉ' : 'Invite Friends'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
         </div>
 
-        {/* 3-Step "How It Works" Section */}
-        <section className="mt-16 bg-white rounded-3xl border border-slate-200/80 p-8 sm:p-10 shadow-sm">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
-              {t('howItWorks')}
+        {/* Simple 3-Step Process Guide */}
+        <section className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+          <div className="text-center max-w-xl mx-auto mb-8">
+            <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-wider">
+              {isAmharic ? 'ቀላል አሰራር' : 'Simple 3-Step Process'}
             </span>
-            <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
-              {t('howItWorksSubtitle')}
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+              {isAmharic
+                ? 'ገንዘብ እንዴት እንደሚያስገቡ እና እንደሚያወጡ'
+                : 'How Money Deposits & Withdrawals Work'}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Step 1 */}
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xl mb-4 shadow-xs">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg mb-3 shadow-xs">
                 1
               </div>
-              <h4 className="font-bold text-base text-slate-900">
-                {t('step1Title')}
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1">
+                {isAmharic ? 'ገንዘብ ያስተላልፉና ደረሰኝ ይላኩ' : 'Transfer & Attach Receipt'}
               </h4>
-              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                {t('step1Desc')}
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'በይፋዊ የቴሌብር ወይም የባንክ አካውንታችን ገንዘብ ልከው የደረሰኝ ስክሪንሹት እና Txn ID በፎርሙ በኩል ያስገባሉ።'
+                  : 'Transfer to official platform accounts and upload the payment confirmation screenshot.'}
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-black text-xl mb-4 shadow-xs">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-lg mb-3 shadow-xs">
                 2
               </div>
-              <h4 className="font-bold text-base text-slate-900">
-                {t('step2Title')}
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1">
+                {isAmharic ? 'አስተዳዳሪው ያረጋግጣል' : 'Admin Verifies & Credits'}
               </h4>
-              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                {t('step2Desc')}
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'አስተዳዳሪው ደረሰኙን ፈትሾ ሲያጸድቅ ገንዘቡ ወዲያው ወደ ቦርሳዎ ይገባል፤ በግዢዎችዎም ትርፍ እና ነጥብ ያገኛሉ።'
+                  : 'Admin inspects the receipt screenshot and approves it. Your wallet is credited instantly.'}
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xl mb-4 shadow-xs">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-lg mb-3 shadow-xs">
                 3
               </div>
-              <h4 className="font-bold text-base text-slate-900">
-                {t('step3Title')}
+              <h4 className="font-extrabold text-sm text-slate-900 mb-1">
+                {isAmharic ? 'ትርፍዎን በቀላሉ ያውጡ' : 'Withdraw Your Profit'}
               </h4>
-              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                {t('step3Desc')}
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isAmharic
+                  ? 'ያገኙትን ትርፍ በማንኛውም ሰዓት ወደ ቴሌብር ወይም የባንክ ሂሳብዎ በአስተዳዳሪው ማረጋገጫ ማውጣት ይችላሉ።'
+                  : 'Request a payout of your balance anytime directly to your Telebirr or Bank account.'}
               </p>
             </div>
           </div>
         </section>
-      </main>
 
-      {/* Selected Merchant Modal */}
-      {selectedMerchant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100">
-            <div className="relative h-48 w-full">
-              <img
-                src={selectedMerchant.coverImage}
-                alt={selectedMerchant.name}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setSelectedMerchant(null)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-black shadow-md">
-                {selectedMerchant.cashbackRate}% {isAmharic ? 'ተመላሽ' : 'Cashback'}
-              </div>
+        {/* Security & Anti-Fraud Notice Banner */}
+        <div className="p-5 rounded-3xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-
-            <div className="p-6">
-              <div className="flex items-center space-x-3 mb-3">
-                <img
-                  src={selectedMerchant.logo}
-                  alt={selectedMerchant.name}
-                  className="w-12 h-12 rounded-xl object-cover border"
-                />
-                <div>
-                  <h3 className="font-extrabold text-lg text-slate-900 leading-tight">
-                    {isAmharic && selectedMerchant.tradeNameAmharic
-                      ? selectedMerchant.tradeNameAmharic
-                      : selectedMerchant.name}
-                  </h3>
-                  {selectedMerchant.tradeNameAmharic && (
-                    <p className="text-xs text-slate-500">
-                      {isAmharic ? selectedMerchant.name : selectedMerchant.tradeNameAmharic}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                {selectedMerchant.description}
+            <div>
+              <h4 className="font-black text-xs sm:text-sm text-emerald-950">
+                {isAmharic ? '100% የተጠበቀ እና በአስተዳዳሪ ቁጥጥር ስር ያለ ስርዓት' : '100% Secure & Admin-Controlled Platform'}
+              </h4>
+              <p className="text-[11px] text-emerald-800">
+                {isAmharic
+                  ? 'ሁሉም የገንዘብ ማስገቢያዎች እና ማውጣቶች በአስተዳዳሪው በእጅ እየተመረመሩ ይረጋገጣሉ።'
+                  : 'Every deposit and withdrawal is manually verified against verified payment statements.'}
               </p>
-
-              {/* Deal banner */}
-              {selectedMerchant.featuredDeal?.title && (
-                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 mb-4 text-xs">
-                  <span className="font-bold text-amber-900 block">
-                    🎁 {selectedMerchant.featuredDeal.title}
-                  </span>
-                  <span className="text-amber-700 block text-[11px] mt-0.5">
-                    {selectedMerchant.featuredDeal.description}
-                  </span>
-                </div>
-              )}
-
-              {/* Location & Details */}
-              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-3">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-slate-400" />
-                  <span>{selectedMerchant.address}, {selectedMerchant.city}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-slate-400" />
-                  <span>{selectedMerchant.phone}</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setSelectedMerchant(null);
-                  setIsPassModalOpen(true);
-                }}
-                className="mt-6 w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md shadow-emerald-600/20 transition-all"
-              >
-                <QrCode className="w-4 h-4" />
-                <span>{t('btnShowPass')}</span>
-              </button>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Digital Loyalty Pass Modal */}
+          <Link
+            to="/finance"
+            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shrink-0 transition-colors"
+          >
+            {isAmharic ? 'ወደ ገንዘብ ማዕከል ይሂዱ' : 'Open Finance Center'}
+          </Link>
+        </div>
+      </main>
+
+      {/* Digital QR Card Modal */}
       <DigitalCardModal isOpen={isPassModalOpen} onClose={() => setIsPassModalOpen(false)} />
     </div>
   );

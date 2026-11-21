@@ -266,8 +266,8 @@ export const FinancePage = () => {
   const totalBalance = walletCash + pointsCashValue;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 py-6 sm:py-8 px-3 sm:px-6 lg:px-8 pb-24 lg:pb-12">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Header Banner */}
         <div className="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 relative overflow-hidden">
           <div className="absolute right-0 top-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -308,7 +308,7 @@ export const FinancePage = () => {
         <div className="flex border-b border-slate-200">
           <button
             onClick={() => setActiveTab('deposit')}
-            className={`flex items-center space-x-2 py-3 px-6 font-bold text-sm border-b-2 transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center space-x-2 py-3 px-4 sm:px-6 font-bold text-xs sm:text-sm border-b-2 transition-all ${
               activeTab === 'deposit'
                 ? 'border-emerald-600 text-emerald-700 bg-emerald-50/50'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -319,7 +319,7 @@ export const FinancePage = () => {
           </button>
           <button
             onClick={() => setActiveTab('withdraw')}
-            className={`flex items-center space-x-2 py-3 px-6 font-bold text-sm border-b-2 transition-all ${
+            className={`flex-1 sm:flex-initial flex items-center justify-center space-x-2 py-3 px-4 sm:px-6 font-bold text-xs sm:text-sm border-b-2 transition-all ${
               activeTab === 'withdraw'
                 ? 'border-emerald-600 text-emerald-700 bg-emerald-50/50'
                 : 'border-transparent text-slate-500 hover:text-slate-800'

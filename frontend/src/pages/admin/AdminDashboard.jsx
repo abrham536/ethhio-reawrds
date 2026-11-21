@@ -204,7 +204,7 @@ export const AdminDashboard = () => {
   const pendingWithdrawalsCount = withdrawals.filter((w) => w.status === 'PENDING').length;
 
   return (
-    <div className="min-h-screen bg-slate-100/60 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-100/60 py-6 sm:py-8 px-3 sm:px-6 lg:px-8 pb-24 lg:pb-12">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
